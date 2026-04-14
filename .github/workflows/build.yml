@@ -10,28 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 项目需要的最新稳定版 Flutter
-      - name: 安装 Flutter 3.27.12
+      # 正确、官方、存在的最新稳定版
+      - name: 安装 Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.12'
+          flutter-version: '3.22.3'
           channel: stable
 
-      # 🔥 强制修复 intl 版本冲突（核心解决）
-      - name: 修复依赖版本
+      # 自动修复 intl 版本冲突（核心！）
+      - name: 修复依赖
         run: |
           cd simple_live_app
-          sed -i 's/intl: ^0.20.2/intl: 0.19.0/g' pubspec.yaml
+          sed -i 's/intl: ^0.20.2/intl: 0.19.0/' pubspec.yaml
           flutter pub get
 
-      # 编译
-      - name: 编译 Android APK
+      # 编译 APK
+      - name: 编译 Android
         run: |
           cd simple_live_app
           flutter build apk --release
 
-      # 上传
+      # 上传成果
       - uses: actions/upload-artifact@v4
         with:
-          name: android-apk
+          name: apk
           path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
