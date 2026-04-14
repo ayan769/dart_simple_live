@@ -1,0 +1,36 @@
+name: 编译 dart_simple_live
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 安装 Flutter
+      - name: 安装 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+          channel: stable
+
+      # 安装依赖
+      - name: 安装项目依赖
+        run: |
+          cd simple_live_app
+          flutter pub get
+
+      # 编译 Android APK
+      - name: 编译 Android APK
+        run: |
+          cd simple_live_app
+          flutter build apk --release
+
+      # 上传编译好的文件
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
