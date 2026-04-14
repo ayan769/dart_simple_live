@@ -10,28 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 👈 关键：用更高版本 Flutter，解决 SDK 版本问题
-      - name: 安装 Flutter 3.24.0
+      # 项目需要的最新稳定版 Flutter
+      - name: 安装 Flutter 3.27.12
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.27.12'
           channel: stable
 
-      # 👈 修复依赖版本
-      - name: 修复依赖并安装
+      # 🔥 强制修复 intl 版本冲突（核心解决）
+      - name: 修复依赖版本
         run: |
           cd simple_live_app
+          sed -i 's/intl: ^0.20.2/intl: 0.19.0/g' pubspec.yaml
           flutter pub get
 
-      # 👈 直接编译，跳过版本检查
+      # 编译
       - name: 编译 Android APK
         run: |
           cd simple_live_app
-          flutter build apk --release --no-version-check
+          flutter build apk --release
 
-      # 上传成果
-      - name: 上传 APK
-        uses: actions/upload-artifact@v4
+      # 上传
+      - uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
